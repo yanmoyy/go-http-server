@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 )
 
@@ -10,7 +11,7 @@ func (cfg *apiConfig) handlerMetrics(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	_, err := w.Write(fmt.Appendf([]byte{}, "Hits: %d", cfg.fileserverHits.Load()))
 	if err != nil {
-		return
+		log.Fatal(fmt.Errorf("error %w", err))
 	}
 }
 
