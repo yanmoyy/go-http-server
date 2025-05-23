@@ -13,3 +13,7 @@
   cryptography libraries
 - Build and understand webhooks and API keys
 - Document the `REST API` with markdown
+
+## Installation
+
+- goose
