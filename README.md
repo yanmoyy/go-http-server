@@ -17,3 +17,26 @@
 ## Installation
 
 - goose
+
+## Scripts
+
+- For better testability, I added some test scripts files. enjoy!
+- look at the `scripts/` directory
+
+```shell
+❯ scripts/test_users.sh
+===== Test 0: Reset, =====
+URL: http://localhost:8080/admin/reset
+Data:
+Response: Hits reset to 0, users successfully deleted
+Status Code: 200
+
+-----------------------------------------
+===== Test 1: Creating a valid user =====
+URL: http://localhost:8080/api/users
+Data: {
+  "email": "john@example.com"
+}
+Response: {"id":"61ab7764-c386-4f4a-9746-716861dcdcf3","created_at":"2025-05-23T14:27:41.819116Z","updated_at":"2025-05-23T14:27:41.819116Z","email":"john@example.com"}
+Status Code: 201
+```
