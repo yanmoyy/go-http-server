@@ -38,17 +38,22 @@ func runReset(t *testing.T, client *api.Client) {
 	})
 }
 
-func runCreateUser(t *testing.T, client *api.Client) api.User {
+func runCreateUser(t *testing.T, client *api.Client, email, password string) api.User {
 	var user api.User
 	t.Run("CreateUser", func(t *testing.T) {
 		var err error
-		user, err = client.CreateUser(api.CreateUserParams{Email: "saul@bettercall.com"})
+		user, err = client.CreateUser(api.CreateUserParams{
+			Email: email, Password: password,
+		})
 		if err != nil {
 			t.Fatalf("Failed to create user: %v", err)
 		}
 		logJSON(t, "Created user", user)
 	})
 	return user
+}
+func runCreateUserDefault(t *testing.T, c *api.Client) api.User {
+	return runCreateUser(t, c, "saul@bettercall.com", "123456")
 }
 
 func runCreateChirp(t *testing.T, client *api.Client, user api.User, body string) api.Chirp {

@@ -11,7 +11,7 @@ func TestCreateChirp(t *testing.T) {
 		return
 	}
 
-	user := runCreateUser(t, client)
+	user := runCreateUserDefault(t, client)
 	if t.Failed() {
 		return
 	}

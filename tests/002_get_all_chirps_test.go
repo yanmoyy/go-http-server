@@ -13,7 +13,7 @@ func TestGetAllChirps(t *testing.T) {
 		return
 	}
 
-	user := runCreateUser(t, client)
+	user := runCreateUserDefault(t, client)
 	runCreateChirp(t, client, user, "I'm gonna be a damn good developer, and people are gonna know about it.")
 	if t.Failed() {
 		return

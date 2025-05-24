@@ -47,7 +47,7 @@ func (c *Client) doRequest(method, endpoint string, body []byte) (*http.Response
 		if err != nil {
 			return nil, fmt.Errorf("io.ReadAll(resp.Body): %w", err)
 		}
-		log.Printf("Status Wrong\nResponse: %s\n", bodyByte)
+		log.Printf("\n    Response(%d): %s", resp.StatusCode, bodyByte)
 		resp.Body = io.NopCloser(bytes.NewReader(bodyByte))
 	}
 

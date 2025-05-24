@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"github.com/yanmoyy/go-http-server/internal/api"
+	"github.com/yanmoyy/go-http-server/internal/auth"
+	"github.com/yanmoyy/go-http-server/internal/database"
 )
 
 type User api.User
@@ -20,10 +22,16 @@ func (cfg *apiConfig) handleCreateUser(w http.ResponseWriter, r *http.Request) {
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Couldin't decode parameters", err)
+		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters", err)
 		return
 	}
-	user, err := cfg.db.CreateUser(r.Context(), params.Email)
+	hashed_password, err := auth.HashPassword(params.Password)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Couldn't generate password", err)
+	}
+	user, err := cfg.db.CreateUser(r.Context(), database.CreateUserParams{
+		HashedPassword: hashed_password, Email: params.Email,
+	})
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't create user", err)
 		return

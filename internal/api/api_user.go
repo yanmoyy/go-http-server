@@ -16,7 +16,8 @@ type User struct {
 }
 
 type CreateUserParams struct {
-	Email string `json:"email"`
+	Password string `json:"password"`
+	Email    string `json:"email"`
 }
 
 func (c *Client) CreateUser(params CreateUserParams) (User, error) {
