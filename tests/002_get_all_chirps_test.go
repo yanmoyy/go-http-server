@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"log"
 	"os"
 	"testing"
 	"time"
@@ -50,19 +49,17 @@ func TestGetAllChirps(t *testing.T) {
 		t.Fatalf("Failed to create chirp: %v", err)
 	}
 	t.Logf("Created chirp: %+v", chirp)
-
 	list, err := client.GetChirpList()
 	if err != nil {
 		t.Fatalf("Failed to get chirp list: %v", err)
 	}
-	log.Println("List of chirp: ")
-
+	t.Log("List of chirp: ")
 	for i, c := range list {
-		log.Printf("Chirp #%d\n", i)
-		log.Println("id: ", c.ID)
-		log.Println("created_at: ", c.CreatedAt)
-		log.Println("updated_at: ", c.UpdatedAt)
-		log.Println("Created_at: ", c.CreatedAt)
-		log.Println("Created_at: ", c.CreatedAt)
+		t.Logf("Chirp #%d\n", i)
+		t.Log("id: ", c.ID)
+		t.Log("created_at: ", c.CreatedAt)
+		t.Log("updated_at: ", c.UpdatedAt)
+		t.Log("body: ", c.Body)
+		t.Log("user_id: ", c.UserID)
 	}
 }
