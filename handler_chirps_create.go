@@ -5,19 +5,13 @@ import (
 	"errors"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/google/uuid"
+	"github.com/yanmoyy/go-http-server/internal/api"
 	"github.com/yanmoyy/go-http-server/internal/database"
 )
 
-type Chirp struct {
-	Id         uuid.UUID `json:"id"`
-	Created_at time.Time `json:"created_at"`
-	Updated_at time.Time `json:"updated_at"`
-	Body       string    `json:"body"`
-	UserId     uuid.UUID `json:"user_id"`
-}
+type Chirp api.Chirp
 
 func (cfg *apiConfig) handleCreateChirp(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
@@ -46,7 +40,6 @@ func (cfg *apiConfig) handleCreateChirp(w http.ResponseWriter, r *http.Request) 
 		Body:   cleaned,
 		UserID: params.UserId,
 	})
-
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't create chirp", err)
 		return
@@ -54,11 +47,11 @@ func (cfg *apiConfig) handleCreateChirp(w http.ResponseWriter, r *http.Request) 
 
 	respondWithJSON(w, http.StatusCreated, response{
 		Chirp: Chirp{
-			Id:         chirp.ID,
-			Created_at: chirp.CreatedAt,
-			Updated_at: chirp.UpdatedAt,
-			Body:       chirp.Body,
-			UserId:     chirp.UserID,
+			ID:        chirp.ID,
+			CreatedAt: chirp.CreatedAt,
+			UpdatedAt: chirp.UpdatedAt,
+			Body:      chirp.Body,
+			UserID:    chirp.UserID,
 		},
 	})
 }

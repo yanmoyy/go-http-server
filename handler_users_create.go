@@ -3,22 +3,14 @@ package main
 import (
 	"encoding/json"
 	"net/http"
-	"time"
 
-	"github.com/google/uuid"
+	"github.com/yanmoyy/go-http-server/internal/api"
 )
 
-type User struct {
-	ID        uuid.UUID `json:"id"`
-	CreateAt  time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	Email     string    `json:"email"`
-}
+type User api.User
 
 func (cfg *apiConfig) handleCreateUser(w http.ResponseWriter, r *http.Request) {
-	type parameters struct {
-		Email string `json:"email"`
-	}
+	type parameters api.CreateUserParams
 
 	type response struct {
 		User

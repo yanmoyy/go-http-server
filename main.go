@@ -9,6 +9,7 @@ import (
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"github.com/yanmoyy/go-http-server/internal/api"
 	"github.com/yanmoyy/go-http-server/internal/database"
 )
 
@@ -52,13 +53,12 @@ func main() {
 	mux := http.NewServeMux()
 	mux.Handle("/app/", apiCfg.middlewareMetricsInc(http.StripPrefix("/app", http.FileServer(http.Dir(filepathRoot)))))
 
-	mux.HandleFunc("GET /api/healthz", handlerReadiness)
-
-	mux.HandleFunc("POST /api/users", apiCfg.handleCreateUser)
-	mux.HandleFunc("POST /api/chirps", apiCfg.handleCreateChirp)
-
-	mux.HandleFunc("GET /admin/metrics", apiCfg.handlerMetrics)
-	mux.HandleFunc("POST /admin/reset", apiCfg.handlerReset)
+	mux.HandleFunc("GET "+api.HealthzEndpoint, handlerReadiness)
+	mux.HandleFunc("POST "+api.UsersEndpoint, apiCfg.handleCreateUser)
+	mux.HandleFunc("POST "+api.ChirpsEndpoint, apiCfg.handleCreateChirp)
+	mux.HandleFunc("GET "+api.ChirpsEndpoint, apiCfg.handleGetChirpList)
+	mux.HandleFunc("GET "+api.MetricsEndpoint, apiCfg.handlerMetrics)
+	mux.HandleFunc("POST "+api.ResetEndpoint, apiCfg.handlerReset)
 
 	srv := &http.Server{
 		Addr:    ":" + port,
