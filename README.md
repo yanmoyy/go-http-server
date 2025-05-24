@@ -36,7 +36,10 @@ Status Code: 200
 URL: http://localhost:8080/api/users
 Data: {
   "email": "john@example.com"
-}
-Response: {"id":"61ab7764-c386-4f4a-9746-716861dcdcf3","created_at":"2025-05-23T14:27:41.819116Z","updated_at":"2025-05-23T14:27:41.819116Z","email":"john@example.com"}
-Status Code: 201
 ```
+
+## Tests
+
+- But there are some limitations for testing by .sh scripts.
+- That's why I added integration tests files in `./tests/` dir.
+- run this command: `go test ./... -v` (-v can show the log)
