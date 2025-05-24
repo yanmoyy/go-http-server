@@ -1,9 +1,9 @@
 #!/bin/bash
 
-SCRIPT_DIR=$(dirname "$0")
-source "$SCRIPT_DIR/common.sh"
-
-CHIRP_URL="$BASE_URL/api/validate_chirp"
+ORIGINAL_DIR=$(pwd)
+cd "$(dirname "$0")" || exit 1
+source ./common.sh
+cd "$ORIGINAL_DIR" || exit 1
 
 # @lang json
 SHORT='{

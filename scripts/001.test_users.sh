@@ -1,9 +1,7 @@
 #!/bin/bash
 
-ORIGINAL_DIR=$(pwd)
-cd "$(dirname "$0")" || exit 1
-source ./common.sh
-cd "$ORIGINAL_DIR" || exit 1
+SCRIPT_DIR=$(dirname "$0")
+source "$SCRIPT_DIR/common.sh"
 
 # Test cases for user creation
 send_post "Test 0: Reset", "$URL_RESET"

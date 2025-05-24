@@ -3,6 +3,9 @@
 # Shared variables
 export BASE_URL="http://localhost:8080" # Fixed by adding http://
 export HEADERS="Content-Type: application/json"
+export URL_USER="$BASE_URL/api/users"
+export URL_RESET="$BASE_URL/admin/reset"
+export CHIRP_URL="$BASE_URL/api/validate_chirp"
 
 # Shared function to send curl request
 send_post() {
