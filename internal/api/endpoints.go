@@ -7,4 +7,6 @@ const (
 	ChirpsEndpoint  = "/api/chirps"
 	MetricsEndpoint = "/admin/metrics"
 	HealthzEndpoint = "/api/healthz"
+
+	ChripIDParam = "chirpID"
 )

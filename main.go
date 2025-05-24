@@ -57,6 +57,7 @@ func main() {
 	mux.HandleFunc("POST "+api.UsersEndpoint, apiCfg.handleCreateUser)
 	mux.HandleFunc("POST "+api.ChirpsEndpoint, apiCfg.handleCreateChirp)
 	mux.HandleFunc("GET "+api.ChirpsEndpoint, apiCfg.handleGetChirpList)
+	mux.HandleFunc("GET "+api.ChirpsEndpoint+"/{"+api.ChripIDParam+"}", apiCfg.handleGetChirpByID)
 	mux.HandleFunc("GET "+api.MetricsEndpoint, apiCfg.handlerMetrics)
 	mux.HandleFunc("POST "+api.ResetEndpoint, apiCfg.handlerReset)
 

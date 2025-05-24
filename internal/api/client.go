@@ -17,8 +17,8 @@ type Client struct {
 }
 
 // NewClient creates a new API client with the specified base URL and timeout
-func NewClient(baseURL string, timeout time.Duration) *Client {
-	return &Client{
+func NewClient(baseURL string, timeout time.Duration) Client {
+	return Client{
 		baseURL: baseURL,
 		httpClient: &http.Client{
 			Timeout: timeout,
@@ -28,7 +28,6 @@ func NewClient(baseURL string, timeout time.Duration) *Client {
 
 func (c *Client) doRequest(method, endpoint string, body []byte) (*http.Response, error) {
 	url := c.baseURL + endpoint
-	log.Printf("Sending %s request to %s", method, url)
 
 	req, err := http.NewRequest(method, url, bytes.NewReader(body))
 	if err != nil {
@@ -42,17 +41,15 @@ func (c *Client) doRequest(method, endpoint string, body []byte) (*http.Response
 	if err != nil {
 		return nil, fmt.Errorf("httpClient.Do(req): %w", err)
 	}
-	log.Printf("Received response: (%d)\n", resp.StatusCode)
-
-	bodyByte, err := io.ReadAll(resp.Body)
-	if err != nil {
-		_ = resp.Body.Close()
-		return nil, fmt.Errorf("io.ReadAll(resp.Body): %w", err)
+	if resp.StatusCode >= 300 {
+		bodyByte, err := io.ReadAll(resp.Body)
+		defer func() { _ = resp.Body.Close() }()
+		if err != nil {
+			return nil, fmt.Errorf("io.ReadAll(resp.Body): %w", err)
+		}
+		log.Printf("Status Wrong\nResponse: %s\n", bodyByte)
+		resp.Body = io.NopCloser(bytes.NewReader(bodyByte))
 	}
-	// restore body
-	resp.Body = io.NopCloser(bytes.NewReader(bodyByte))
-
-	log.Printf("body: %s\n", string(bodyByte))
 
 	return resp, nil
 }

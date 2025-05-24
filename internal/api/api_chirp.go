@@ -55,3 +55,20 @@ func (c *Client) GetChirpList() ([]Chirp, error) {
 	}
 	return list, nil
 }
+
+func (c *Client) GetChirpByID(id uuid.UUID) (Chirp, error) {
+	resp, err := c.get(ChirpsEndpoint + "/" + id.String())
+	defer func() { _ = resp.Body.Close() }()
+	if err != nil {
+		return Chirp{}, fmt.Errorf("c.get: %w", err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		return Chirp{}, fmt.Errorf("status code is not StatusOK(200): %d", resp.StatusCode)
+	}
+	chirp := Chirp{}
+	err = c.decodeResponse(resp, &chirp)
+	if err != nil {
+		return Chirp{}, fmt.Errorf("c.decodeRespons: %w", err)
+	}
+	return chirp, nil
+}

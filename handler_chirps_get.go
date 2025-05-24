@@ -2,6 +2,9 @@ package main
 
 import (
 	"net/http"
+
+	"github.com/google/uuid"
+	"github.com/yanmoyy/go-http-server/internal/api"
 )
 
 func (cfg *apiConfig) handleGetChirpList(w http.ResponseWriter, r *http.Request) {
@@ -22,4 +25,31 @@ func (cfg *apiConfig) handleGetChirpList(w http.ResponseWriter, r *http.Request)
 		})
 	}
 	respondWithJSON(w, http.StatusOK, resp)
+}
+
+func (cfg *apiConfig) handleGetChirpByID(w http.ResponseWriter, r *http.Request) {
+
+	type response struct {
+		Chirp
+	}
+	idString := r.PathValue(api.ChripIDParam)
+	id, err := uuid.Parse(idString)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "couldn't parse uuid", err)
+		return
+	}
+	chirp, err := cfg.db.GetChirpById(r.Context(), id)
+	if err != nil {
+		respondWithError(w, http.StatusNotFound, "couldn't fetch chirp", err)
+		return
+	}
+	respondWithJSON(w, http.StatusOK, response{
+		Chirp: Chirp{
+			ID:        chirp.ID,
+			CreatedAt: chirp.CreatedAt,
+			UpdatedAt: chirp.UpdatedAt,
+			Body:      chirp.Body,
+			UserID:    chirp.UserID,
+		},
+	})
 }
