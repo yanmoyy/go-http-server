@@ -7,10 +7,22 @@ import (
 
 func TestGetAllChirps(t *testing.T) {
 	client := getClient(t)
+
 	runReset(t, client)
+	if t.Failed() {
+		return
+	}
+
 	user := runCreateUser(t, client)
 	runCreateChirp(t, client, user, "I'm gonna be a damn good developer, and people are gonna know about it.")
+	if t.Failed() {
+		return
+	}
+
 	runCreateChirp(t, client, user, "I once told a woman I was Kevin Costner, and it worked because I believed it.")
+	if t.Failed() {
+		return
+	}
 
 	list, err := client.GetChirpList()
 	if err != nil {

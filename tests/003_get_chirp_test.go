@@ -7,8 +7,20 @@ import (
 func TestGetChirp(t *testing.T) {
 	client := getClient(t)
 	runReset(t, client)
+	if t.Failed() {
+		return
+	}
+
 	user := runCreateUser(t, client)
+	if t.Failed() {
+		return
+	}
+
 	chirp := runCreateChirp(t, client, user, "I'm gonna be a damn good developer, and people are gonna know about it.")
+	if t.Failed() {
+		return
+	}
+
 	t.Run("GetChirpByID", func(t *testing.T) {
 		fetchedChirp, err := client.GetChirpByID(chirp.ID)
 		if err != nil {

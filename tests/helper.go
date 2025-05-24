@@ -15,7 +15,7 @@ func getClient(t *testing.T) *api.Client {
 		t.Fatal("BASE_URL not set in .env or environment")
 	}
 	client := api.NewClient(baseURL, 5*time.Second)
-	return &client
+	return client
 }
 
 // logJSON pretty-prints a struct as JSON with indentation

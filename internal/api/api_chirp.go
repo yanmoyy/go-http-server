@@ -23,10 +23,10 @@ type CreateChirpParams struct {
 
 func (c *Client) CreateChirp(params CreateChirpParams) (Chirp, error) {
 	resp, err := c.post(ChirpsEndpoint, params)
-	defer func() { _ = resp.Body.Close() }()
 	if err != nil {
 		return Chirp{}, fmt.Errorf("c.post: %w", err)
 	}
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusCreated {
 		return Chirp{}, fmt.Errorf("status code is not StatusCreated(201): %d", resp.StatusCode)
 	}
@@ -40,10 +40,10 @@ func (c *Client) CreateChirp(params CreateChirpParams) (Chirp, error) {
 
 func (c *Client) GetChirpList() ([]Chirp, error) {
 	resp, err := c.get(ChirpsEndpoint)
-	defer func() { _ = resp.Body.Close() }()
 	if err != nil {
 		return nil, fmt.Errorf("c.get: %w", err)
 	}
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("status code is not StatusOK(200): %d", resp.StatusCode)
 	}
@@ -58,10 +58,10 @@ func (c *Client) GetChirpList() ([]Chirp, error) {
 
 func (c *Client) GetChirpByID(id uuid.UUID) (Chirp, error) {
 	resp, err := c.get(ChirpsEndpoint + "/" + id.String())
-	defer func() { _ = resp.Body.Close() }()
 	if err != nil {
 		return Chirp{}, fmt.Errorf("c.get: %w", err)
 	}
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return Chirp{}, fmt.Errorf("status code is not StatusOK(200): %d", resp.StatusCode)
 	}

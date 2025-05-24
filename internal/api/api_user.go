@@ -21,10 +21,10 @@ type CreateUserParams struct {
 
 func (c *Client) CreateUser(params CreateUserParams) (User, error) {
 	resp, err := c.post(UsersEndpoint, params)
-	defer func() { _ = resp.Body.Close() }()
 	if err != nil {
 		return User{}, fmt.Errorf("c.post: %w", err)
 	}
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusCreated {
 		return User{}, fmt.Errorf("status code is not StatusCreated(201): %d", resp.StatusCode)
 	}
