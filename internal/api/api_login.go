@@ -6,9 +6,8 @@ import (
 )
 
 type LoginParams struct {
-	Password         string `json:"password"`
-	Email            string `json:"email"`
-	ExpiresInSeconds int64  `json:"expires_in_seconds"`
+	Password string `json:"password"`
+	Email    string `json:"email"`
 }
 
 type LoginResponse struct {

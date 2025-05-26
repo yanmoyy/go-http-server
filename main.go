@@ -70,6 +70,10 @@ func main() {
 	mux.HandleFunc("GET "+api.EndpointMetrics, apiCfg.handlerMetrics)
 	mux.HandleFunc("POST "+api.EndpointReset, apiCfg.handlerReset)
 
+	// Token
+	mux.HandleFunc("POST "+api.EndpointRefresh, apiCfg.handleRefresh)
+	mux.HandleFunc("POST "+api.EndpointRevoke, apiCfg.handleRevoke)
+
 	srv := &http.Server{
 		Addr:    ":" + port,
 		Handler: mux,
