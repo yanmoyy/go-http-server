@@ -1,13 +1,19 @@
 package auth
 
 import (
+	"errors"
 	"fmt"
+	"net/http"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
+	"github.com/yanmoyy/go-http-server/internal/api"
 	"golang.org/x/crypto/bcrypt"
 )
+
+var ErrNoAuthHeaderIncluded = errors.New("no auth header include in request")
 
 func HashPassword(password string) (string, error) {
 	hashed, err := bcrypt.GenerateFromPassword([]byte(password), 10)
@@ -55,4 +61,17 @@ func ValidateJWT(tokenString, tokenSecret string) (uuid.UUID, error) {
 		return uuid.UUID{}, fmt.Errorf("uuid.Parse: %w", err)
 	}
 	return id, nil
+}
+
+func GetBearerToken(headers http.Header) (string, error) {
+	authHeader := headers.Get(api.HeaderAuthorization)
+	if authHeader == "" {
+		return "", ErrNoAuthHeaderIncluded
+	}
+	// Should split and check the header is correct format!
+	splitAuth := strings.Split(authHeader, " ")
+	if len(splitAuth) != 2 || splitAuth[0] != "Bearer" {
+		return "", errors.New("malformed authorization header")
+	}
+	return splitAuth[1], nil
 }

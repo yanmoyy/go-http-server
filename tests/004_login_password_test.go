@@ -20,15 +20,12 @@ func TestLoginPassword(t *testing.T) {
 		return
 	}
 	assert.Equal(t, user.Email, email)
-	user, err := client.Login(api.LoginParams{
-		Email: email, Password: password,
-	})
-	if err != nil {
-		t.Errorf("Failed to Login user: %v", err)
+	_ = runLoginUser(t, client, email, password)
+	if t.Failed() {
+		return
 	}
-	assert.Equal(t, email, user.Email)
-	// Login with different password
-	_, err = client.Login(api.LoginParams{
+	// login with different user
+	_, err := client.Login(api.LoginParams{
 		Email: email, Password: "000011112222",
 	})
 	if err != nil {

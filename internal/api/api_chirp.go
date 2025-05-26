@@ -17,12 +17,11 @@ type Chirp struct {
 }
 
 type CreateChirpParams struct {
-	Body   string    `json:"body"`
-	UserID uuid.UUID `json:"user_id"`
+	Body string `json:"body"`
 }
 
-func (c *Client) CreateChirp(params CreateChirpParams) (Chirp, error) {
-	resp, err := c.post(ChirpsEndpoint, params)
+func (c *Client) CreateChirp(params CreateChirpParams, token string) (Chirp, error) {
+	resp, err := c.postWithToken(EndpointChirps, token, params)
 	if err != nil {
 		return Chirp{}, fmt.Errorf("c.post: %w", err)
 	}
@@ -30,16 +29,16 @@ func (c *Client) CreateChirp(params CreateChirpParams) (Chirp, error) {
 	if resp.StatusCode != http.StatusCreated {
 		return Chirp{}, fmt.Errorf("status code is not StatusCreated(201): %d", resp.StatusCode)
 	}
-	var user Chirp
-	err = c.decodeResponse(resp, &user)
+	var chirp Chirp
+	err = c.decodeResponse(resp, &chirp)
 	if err != nil {
 		return Chirp{}, fmt.Errorf("c.decodeResponse: %w", err)
 	}
-	return user, nil
+	return chirp, nil
 }
 
 func (c *Client) GetChirpList() ([]Chirp, error) {
-	resp, err := c.get(ChirpsEndpoint)
+	resp, err := c.get(EndpointChirps)
 	if err != nil {
 		return nil, fmt.Errorf("c.get: %w", err)
 	}
@@ -57,7 +56,7 @@ func (c *Client) GetChirpList() ([]Chirp, error) {
 }
 
 func (c *Client) GetChirpByID(id uuid.UUID) (Chirp, error) {
-	resp, err := c.get(ChirpsEndpoint + "/" + id.String())
+	resp, err := c.get(EndpointChirps + "/" + id.String())
 	if err != nil {
 		return Chirp{}, fmt.Errorf("c.get: %w", err)
 	}

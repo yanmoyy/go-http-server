@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+
+	"github.com/yanmoyy/go-http-server/internal/api"
 )
 
 func respondWithError(w http.ResponseWriter, code int, msg string, err error) {
@@ -22,7 +24,7 @@ func respondWithError(w http.ResponseWriter, code int, msg string, err error) {
 }
 
 func respondWithJSON(w http.ResponseWriter, code int, payload any) {
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set(api.HeaderContentType, api.HeaderApplicationJson)
 	dat, err := json.Marshal(payload)
 	if err != nil {
 		log.Printf("Error marshalling JSON: %s", err)

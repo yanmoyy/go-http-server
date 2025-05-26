@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"net/http"
 	"testing"
 	"time"
 
@@ -146,5 +147,50 @@ func TestJWTExpiration(t *testing.T) {
 				t.Errorf("TestJWTExpiration() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
+	}
+}
+
+func TestGetBearerToken(t *testing.T) {
+	tests := []struct {
+		name      string
+		headers   http.Header
+		wantToken string
+		wantErr   bool
+	}{
+		{
+			name: "Valid Bearer token",
+			headers: http.Header{
+				"Authorization": []string{"Bearer valid_token"},
+			},
+			wantToken: "valid_token",
+			wantErr:   false,
+		},
+		{
+			name:      "Missing Authorization Header",
+			headers:   http.Header{},
+			wantToken: "",
+			wantErr:   true,
+		},
+		{
+			name: "Malformed Authorization header",
+			headers: http.Header{
+				"Authorization": []string{"InvalidBearer token"},
+			},
+			wantToken: "",
+			wantErr:   true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(
+			tt.name, func(t *testing.T) {
+				gotToken, err := GetBearerToken(tt.headers)
+				if (err != nil) != tt.wantErr {
+					t.Errorf("GetBearerToken(): %v, wantErr %v", err, tt.wantErr)
+				}
+				if gotToken != tt.wantToken {
+					t.Errorf("GetBearerToken(): gotToken = %s, want: %s", gotToken, tt.wantToken)
+				}
+			},
+		)
 	}
 }

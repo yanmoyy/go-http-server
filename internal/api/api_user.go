@@ -21,7 +21,7 @@ type CreateUserParams struct {
 }
 
 func (c *Client) CreateUser(params CreateUserParams) (User, error) {
-	resp, err := c.post(UsersEndpoint, params)
+	resp, err := c.post(EndpointUsers, params)
 	if err != nil {
 		return User{}, fmt.Errorf("c.post: %w", err)
 	}

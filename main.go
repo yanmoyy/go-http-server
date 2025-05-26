@@ -17,6 +17,7 @@ type apiConfig struct {
 	fileserverHits atomic.Int32
 	db             *database.Queries
 	platform       string
+	jwtSecret      string
 }
 
 func main() {
@@ -28,13 +29,17 @@ func main() {
 		log.Fatalf("Error load .env: %s", err)
 	}
 
-	dbURL := os.Getenv("DB_URL")
+	dbURL := os.Getenv(envDBURL)
 	if dbURL == "" {
 		log.Fatal("DB_URL must be set")
 	}
-	platform := os.Getenv("PLATFORM")
+	platform := os.Getenv(envPlatform)
 	if platform == "" {
 		log.Fatal("Platform must be set")
+	}
+	jwtSecret := os.Getenv(envJWTSecret)
+	if jwtSecret == "" {
+		log.Fatal("JWT_SECRET env is not set")
 	}
 
 	dbConn, err := sql.Open("postgres", dbURL)
@@ -48,21 +53,22 @@ func main() {
 		fileserverHits: atomic.Int32{},
 		db:             dbQueries,
 		platform:       platform,
+		jwtSecret:      jwtSecret,
 	}
 
 	mux := http.NewServeMux()
 	mux.Handle("/app/", apiCfg.middlewareMetricsInc(http.StripPrefix("/app", http.FileServer(http.Dir(filepathRoot)))))
 
-	mux.HandleFunc("GET "+api.HealthzEndpoint, handlerReadiness)
+	mux.HandleFunc("GET "+api.EndpointHealthz, handlerReadiness)
 
-	mux.HandleFunc("POST "+api.UsersEndpoint, apiCfg.handleCreateUser)
-	mux.HandleFunc("POST "+api.LoginEndpoint, apiCfg.handleLogin)
+	mux.HandleFunc("POST "+api.EndpointUsers, apiCfg.handleCreateUser)
+	mux.HandleFunc("POST "+api.EndpointLogin, apiCfg.handleLogin)
 
-	mux.HandleFunc("POST "+api.ChirpsEndpoint, apiCfg.handleCreateChirp)
-	mux.HandleFunc("GET "+api.ChirpsEndpoint, apiCfg.handleGetChirpList)
-	mux.HandleFunc("GET "+api.ChirpsEndpoint+"/{"+api.ChirpIDParam+"}", apiCfg.handleGetChirpByID)
-	mux.HandleFunc("GET "+api.MetricsEndpoint, apiCfg.handlerMetrics)
-	mux.HandleFunc("POST "+api.ResetEndpoint, apiCfg.handlerReset)
+	mux.HandleFunc("POST "+api.EndpointChirps, apiCfg.handleCreateChirp)
+	mux.HandleFunc("GET "+api.EndpointChirps, apiCfg.handleGetChirpList)
+	mux.HandleFunc("GET "+api.EndpointChirps+"/{"+api.ChirpIDParam+"}", apiCfg.handleGetChirpByID)
+	mux.HandleFunc("GET "+api.EndpointMetrics, apiCfg.handlerMetrics)
+	mux.HandleFunc("POST "+api.EndpointReset, apiCfg.handlerReset)
 
 	srv := &http.Server{
 		Addr:    ":" + port,

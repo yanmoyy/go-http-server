@@ -6,7 +6,7 @@ import (
 )
 
 func (c *Client) Reset() error {
-	resp, err := c.post(ResetEndpoint, nil)
+	resp, err := c.post(EndpointReset, nil)
 	if err != nil {
 		return fmt.Errorf("c.post: %w", err)
 	}

@@ -26,7 +26,7 @@ func NewClient(baseURL string, timeout time.Duration) *Client {
 	}
 }
 
-func (c *Client) doRequest(method, endpoint string, body []byte) (*http.Response, error) {
+func (c *Client) doRequest(method, endpoint, token string, body []byte) (*http.Response, error) {
 	url := c.baseURL + endpoint
 
 	req, err := http.NewRequest(method, url, bytes.NewReader(body))
@@ -34,7 +34,11 @@ func (c *Client) doRequest(method, endpoint string, body []byte) (*http.Response
 		return nil, fmt.Errorf("http.NewRequest: %w", err)
 	}
 	if method == http.MethodPost || method == http.MethodPut {
-		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set(HeaderContentType, HeaderApplicationJson)
+	}
+
+	if token != "" {
+		req.Header.Add(HeaderAuthorization, BearerPrefix+token)
 	}
 
 	resp, err := c.httpClient.Do(req)
@@ -62,25 +66,21 @@ func (c *Client) decodeResponse(resp *http.Response, v any) error {
 }
 
 func (c *Client) get(endpoint string) (*http.Response, error) {
-	return c.doRequest(http.MethodGet, endpoint, nil)
+	return c.getWithToken(endpoint, "")
+}
+
+func (c *Client) getWithToken(endpoint, token string) (*http.Response, error) {
+	return c.doRequest(http.MethodGet, endpoint, token, nil)
 }
 
 func (c *Client) post(endpoint string, body any) (*http.Response, error) {
+	return c.postWithToken(endpoint, "", body)
+}
+
+func (c *Client) postWithToken(endpoint, token string, body any) (*http.Response, error) {
 	jsonData, err := json.Marshal(body)
 	if err != nil {
 		return nil, fmt.Errorf("json.Marshal: %w", err)
 	}
-	return c.doRequest(http.MethodPost, endpoint, jsonData)
-}
-
-func (c *Client) put(endpoint string, body any) (*http.Response, error) {
-	jsonData, err := json.Marshal(body)
-	if err != nil {
-		return nil, fmt.Errorf("json.Marshal: %w", err)
-	}
-	return c.doRequest(http.MethodPut, endpoint, jsonData)
-}
-
-func (c *Client) delete(endpoint string) (*http.Response, error) {
-	return c.doRequest(http.MethodDelete, endpoint, nil)
+	return c.doRequest(http.MethodPost, endpoint, token, jsonData)
 }
