@@ -7,8 +7,6 @@ package database
 
 import (
 	"context"
-	"database/sql"
-	"time"
 
 	"github.com/google/uuid"
 )
@@ -70,44 +68,56 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 
 const getUserFromRefreshToken = `-- name: GetUserFromRefreshToken :one
 SELECT
-  id, users.created_at, users.updated_at, email, hashed_password, token, refresh_tokens.created_at, refresh_tokens.updated_at, user_id, expires_at, revoked_at
+  users.id, users.created_at, users.updated_at, users.email, users.hashed_password
 FROM
   users
-  INNER JOIN refresh_tokens ON refresh_tokens.user_id = users.id
+  JOIN refresh_tokens ON users.id = refresh_tokens.user_id
 WHERE
   refresh_tokens.token = $1 AND
-  refresh_tokens.revoked_at IS NULL
+  revoked_at IS NULL AND
+  expires_at > NOW()
 `
 
-type GetUserFromRefreshTokenRow struct {
-	ID             uuid.UUID
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
-	Email          string
-	HashedPassword string
-	Token          string
-	CreatedAt_2    time.Time
-	UpdatedAt_2    time.Time
-	UserID         uuid.UUID
-	ExpiresAt      time.Time
-	RevokedAt      sql.NullTime
-}
-
-func (q *Queries) GetUserFromRefreshToken(ctx context.Context, token string) (GetUserFromRefreshTokenRow, error) {
+func (q *Queries) GetUserFromRefreshToken(ctx context.Context, token string) (User, error) {
 	row := q.db.QueryRowContext(ctx, getUserFromRefreshToken, token)
-	var i GetUserFromRefreshTokenRow
+	var i User
 	err := row.Scan(
 		&i.ID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Email,
 		&i.HashedPassword,
-		&i.Token,
-		&i.CreatedAt_2,
-		&i.UpdatedAt_2,
-		&i.UserID,
-		&i.ExpiresAt,
-		&i.RevokedAt,
+	)
+	return i, err
+}
+
+const updateUser = `-- name: UpdateUser :one
+UPDATE users
+SET
+  updated_at = NOW(),
+  email = $2,
+  hashed_password = $3
+WHERE
+  id = $1
+RETURNING
+  id, created_at, updated_at, email, hashed_password
+`
+
+type UpdateUserParams struct {
+	ID             uuid.UUID
+	Email          string
+	HashedPassword string
+}
+
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, updateUser, arg.ID, arg.Email, arg.HashedPassword)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.Email,
+		&i.HashedPassword,
 	)
 	return i, err
 }

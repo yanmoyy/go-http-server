@@ -62,6 +62,7 @@ func main() {
 	mux.HandleFunc("GET "+api.EndpointHealthz, handlerReadiness)
 
 	mux.HandleFunc("POST "+api.EndpointUsers, apiCfg.handleCreateUser)
+	mux.HandleFunc("PUT "+api.EndpointUsers, apiCfg.handleUpdateUser)
 	mux.HandleFunc("POST "+api.EndpointLogin, apiCfg.handleLogin)
 
 	mux.HandleFunc("POST "+api.EndpointChirps, apiCfg.handleCreateChirp)

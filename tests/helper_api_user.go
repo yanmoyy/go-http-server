@@ -53,18 +53,18 @@ func runLoginUserDefault(t *testing.T, c *api.Client) api.LoginResponse {
 	return runLoginUser(t, c, "saul@bettercall.com", "123456")
 }
 
-func runCreateChirp(t *testing.T, client *api.Client, token string, body string) api.Chirp {
-	var chirp api.Chirp
-	t.Run("CreateChirp", func(t *testing.T) {
-		params := api.CreateChirpParams{
-			Body: body,
-		}
+func runUpdateUser(t *testing.T, client *api.Client, token, email, password string) api.User {
+	var user api.User
+	t.Run("UpdateUser", func(t *testing.T) {
 		var err error
-		chirp, err = client.CreateChirp(params, token)
+		user, err = client.UpdateUser(api.UpdateUserParams{
+			Email:    email,
+			Password: password,
+		}, token)
 		if err != nil {
-			t.Fatalf("Failed to create chirp: %v", err)
+			t.Errorf("Failed to update user: %v", err)
 		}
-		logJSON(t, "Created chirp", chirp)
+		logJSON(t, "Updated User", user)
 	})
-	return chirp
+	return user
 }

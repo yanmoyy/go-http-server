@@ -16,8 +16,8 @@ type User struct {
 }
 
 type CreateUserParams struct {
-	Password string `json:"password"`
 	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 func (c *Client) CreateUser(params CreateUserParams) (User, error) {
@@ -28,6 +28,28 @@ func (c *Client) CreateUser(params CreateUserParams) (User, error) {
 	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusCreated {
 		return User{}, fmt.Errorf("status code is not StatusCreated(201): %d", resp.StatusCode)
+	}
+	var user User
+	err = c.decodeResponse(resp, &user)
+	if err != nil {
+		return User{}, fmt.Errorf("c.decodeResponse: %w", err)
+	}
+	return user, nil
+}
+
+type UpdateUserParams struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+func (c *Client) UpdateUser(params UpdateUserParams, token string) (User, error) {
+	resp, err := c.putWithToken(EndpointUsers, token, params)
+	if err != nil {
+		return User{}, fmt.Errorf("c.put: %w", err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+	if resp.StatusCode != http.StatusOK {
+		return User{}, fmt.Errorf("status code is not StatusOK(200): %d", resp.StatusCode)
 	}
 	var user User
 	err = c.decodeResponse(resp, &user)

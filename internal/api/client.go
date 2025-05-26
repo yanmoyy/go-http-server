@@ -69,12 +69,24 @@ func (c *Client) get(endpoint string) (*http.Response, error) {
 	return c.getWithToken(endpoint, "")
 }
 
-func (c *Client) getWithToken(endpoint, token string) (*http.Response, error) {
-	return c.doRequest(http.MethodGet, endpoint, token, nil)
-}
-
 func (c *Client) post(endpoint string, body any) (*http.Response, error) {
 	return c.postWithToken(endpoint, "", body)
+}
+
+func (c *Client) put(endpoint string, body any) (*http.Response, error) {
+	return c.putWithToken(endpoint, "", body)
+}
+
+func (c *Client) putWithToken(endpoint, token string, body any) (*http.Response, error) {
+	jsonData, err := json.Marshal(body)
+	if err != nil {
+		return nil, fmt.Errorf("json.Marshal: %w", err)
+	}
+	return c.doRequest(http.MethodPut, endpoint, token, jsonData)
+}
+
+func (c *Client) getWithToken(endpoint, token string) (*http.Response, error) {
+	return c.doRequest(http.MethodGet, endpoint, token, nil)
 }
 
 func (c *Client) postWithToken(endpoint, token string, body any) (*http.Response, error) {
