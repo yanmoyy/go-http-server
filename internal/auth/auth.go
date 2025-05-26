@@ -13,6 +13,13 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type TokenType string
+
+const (
+	// TokenTypeAccess -
+	TokenTypeAccess TokenType = "chirpy-access"
+)
+
 var ErrNoAuthHeaderIncluded = errors.New("no auth header include in request")
 
 func HashPassword(password string) (string, error) {
@@ -30,9 +37,9 @@ func CheckPasswordHash(password, hash string) error {
 func MakeJWT(userID uuid.UUID, tokenSecret string, expiresIn time.Duration) (string, error) {
 	now := time.Now()
 	claims := jwt.RegisteredClaims{
-		Issuer:    "chirpy",
+		Issuer:    string(TokenTypeAccess),
 		IssuedAt:  jwt.NewNumericDate(now.UTC()),
-		ExpiresAt: jwt.NewNumericDate(now.Add(expiresIn).UTC()),
+		ExpiresAt: jwt.NewNumericDate(now.UTC().Add(expiresIn)),
 		Subject:   userID.String(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -56,9 +63,17 @@ func ValidateJWT(tokenString, tokenSecret string) (uuid.UUID, error) {
 	if err != nil {
 		return uuid.UUID{}, fmt.Errorf("token.Claims.GetSubject: %w", err)
 	}
+	issuer, err := token.Claims.GetIssuer()
+	if err != nil {
+		return uuid.Nil, err
+	}
+	if issuer != string(TokenTypeAccess) {
+		return uuid.Nil, errors.New("invalid issuer")
+	}
+
 	id, err := uuid.Parse(subject)
 	if err != nil {
-		return uuid.UUID{}, fmt.Errorf("uuid.Parse: %w", err)
+		return uuid.Nil, fmt.Errorf("invalid user ID: %w", err)
 	}
 	return id, nil
 }
