@@ -9,7 +9,7 @@ import (
 	"github.com/yanmoyy/go-http-server/internal/api"
 )
 
-func TestPolkaWebhook(t *testing.T) {
+func TestPolkaWebhookKey(t *testing.T) {
 	key := os.Getenv("POLKA_KEY")
 	if key == "" {
 		t.Errorf("POLKA_KEY not found")
@@ -27,10 +27,13 @@ func TestPolkaWebhook(t *testing.T) {
 	}
 	assert.Equal(t, defaultEmail, user.Email)
 	assert.Equal(t, false, user.IsChirpyRed)
-	code, err := c.PolkaWebhookPost(user.ID, "user.payment_failed", key)
-	if err != nil || code != http.StatusNoContent {
-		t.Errorf("Failed to PolkaWebhookPost: %v, code=%v", err, code)
+
+	// No Api Key
+	code, err := c.PolkaWebhookPost(user.ID, api.EventUpgrade, "")
+	if err == nil || code != http.StatusUnauthorized {
+		t.Errorf("PolkaWebhookPost Should be error %v, code=%v", err, code)
 	}
+
 	code, err = c.PolkaWebhookPost(user.ID, api.EventUpgrade, key)
 	if err != nil || code != http.StatusNoContent {
 		t.Errorf("Failed to PolkaWebhookPost: %v, code=%v", err, code)

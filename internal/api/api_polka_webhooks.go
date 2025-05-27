@@ -18,15 +18,16 @@ type PolkaWebhookParams struct {
 	} `json:"data"`
 }
 
-func (c *Client) PolkaWebhookPost(userID uuid.UUID, event Event) (statusCode int, err error) {
-	resp, err := c.post(EndpointPolkaWebhooks, PolkaWebhookParams{
+func (c *Client) PolkaWebhookPost(userID uuid.UUID, event Event, key string) (statusCode int, err error) {
+	params := PolkaWebhookParams{
 		Event: event,
 		Data: struct {
 			UserID uuid.UUID `json:"user_id"`
 		}{
 			UserID: userID,
 		},
-	})
+	}
+	resp, err := c.postWithAPIKey(EndpointPolkaWebhooks, key, params)
 	if err != nil {
 		return resp.StatusCode, fmt.Errorf("c.post: %w", err)
 	}

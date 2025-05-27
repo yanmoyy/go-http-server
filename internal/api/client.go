@@ -26,7 +26,7 @@ func NewClient(baseURL string, timeout time.Duration) *Client {
 	}
 }
 
-func (c *Client) doRequest(method, endpoint, token string, body []byte) (*http.Response, error) {
+func (c *Client) doRequest(method, endpoint, auth string, body []byte) (*http.Response, error) {
 	url := c.baseURL + endpoint
 
 	req, err := http.NewRequest(method, url, bytes.NewReader(body))
@@ -36,11 +36,9 @@ func (c *Client) doRequest(method, endpoint, token string, body []byte) (*http.R
 	if method == http.MethodPost || method == http.MethodPut {
 		req.Header.Set(HeaderContentType, HeaderApplicationJson)
 	}
-
-	if token != "" {
-		req.Header.Add(HeaderAuthorization, BearerPrefix+token)
+	if auth != "" {
+		req.Header.Add(HeaderAuthorization, auth)
 	}
-
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("httpClient.Do(req): %w", err)
@@ -66,15 +64,19 @@ func (c *Client) decodeResponse(resp *http.Response, v any) error {
 }
 
 func (c *Client) get(endpoint string) (*http.Response, error) {
-	return c.getWithToken(endpoint, "")
+	return c.doRequest(http.MethodGet, endpoint, "", nil)
 }
 
-func (c *Client) post(endpoint string, body any) (*http.Response, error) {
-	return c.postWithToken(endpoint, "", body)
+func (c *Client) post(endpoint string, auth string, body any) (*http.Response, error) {
+	jsonData, err := json.Marshal(body)
+	if err != nil {
+		return nil, fmt.Errorf("json.Marshal: %w", err)
+	}
+	return c.doRequest(http.MethodPost, endpoint, auth, jsonData)
 }
 
 func (c *Client) deleteWithToken(endpoint, token string) (*http.Response, error) {
-	return c.doRequest(http.MethodDelete, endpoint, token, nil)
+	return c.doRequest(http.MethodDelete, endpoint, BearerPrefix+token, nil)
 }
 
 func (c *Client) putWithToken(endpoint, token string, body any) (*http.Response, error) {
@@ -82,17 +84,13 @@ func (c *Client) putWithToken(endpoint, token string, body any) (*http.Response,
 	if err != nil {
 		return nil, fmt.Errorf("json.Marshal: %w", err)
 	}
-	return c.doRequest(http.MethodPut, endpoint, token, jsonData)
-}
-
-func (c *Client) getWithToken(endpoint, token string) (*http.Response, error) {
-	return c.doRequest(http.MethodGet, endpoint, token, nil)
+	return c.doRequest(http.MethodPut, endpoint, BearerPrefix+token, jsonData)
 }
 
 func (c *Client) postWithToken(endpoint, token string, body any) (*http.Response, error) {
-	jsonData, err := json.Marshal(body)
-	if err != nil {
-		return nil, fmt.Errorf("json.Marshal: %w", err)
-	}
-	return c.doRequest(http.MethodPost, endpoint, token, jsonData)
+	return c.post(endpoint, BearerPrefix+token, body)
+}
+
+func (c *Client) postWithAPIKey(endpoint, key string, body any) (*http.Response, error) {
+	return c.post(endpoint, ApiKeyPrefix+key, body)
 }

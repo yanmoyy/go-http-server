@@ -17,7 +17,7 @@ type LoginResponse struct {
 }
 
 func (c *Client) Login(params LoginParams) (LoginResponse, error) {
-	resp, err := c.post(EndpointLogin, params)
+	resp, err := c.post(EndpointLogin, "", params)
 	if err != nil {
 		return LoginResponse{}, fmt.Errorf("c.post: %w", err)
 	}

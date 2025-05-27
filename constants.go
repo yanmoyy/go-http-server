@@ -5,4 +5,5 @@ const (
 	envPlatform  = "PLATFORM"
 	envBaseURL   = "BASE_URL"
 	envJWTSecret = "JWT_SECRET"
+	envPolkaKey  = "POLKA_KEY"
 )

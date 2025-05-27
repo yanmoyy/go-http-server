@@ -18,6 +18,7 @@ const (
 	// Params
 	ChirpIDParam = "chirpID"
 	BearerPrefix = "Bearer "
+	ApiKeyPrefix = "ApiKey "
 
 	// Header
 	HeaderContentType     = "Content-Type"
