@@ -53,11 +53,11 @@ func TestGetChirpListAuthorTest(t *testing.T) {
 	skylerBody1 := "Mr President...."
 	runCreateChirp(t, c, skylerAccessToken, skylerBody1)
 
-	saulList, err := c.GetChirpList(saul.ID.String())
+	saulList, err := c.GetChirpList(saul.ID.String(), "")
 	if err != nil {
 		t.Errorf("Failed to get Chirp list: %v", err)
 	}
-	skyelerList, err := c.GetChirpList(skyler.ID.String())
+	skyelerList, err := c.GetChirpList(skyler.ID.String(), "")
 	if err != nil {
 		t.Errorf("Failed to get Chirp list: %v", err)
 	}

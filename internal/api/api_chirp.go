@@ -37,7 +37,12 @@ func (c *Client) CreateChirp(params CreateChirpParams, token string) (Chirp, err
 	return chirp, nil
 }
 
-func (c *Client) GetChirpList(authorID string) ([]Chirp, error) {
+const (
+	SortAsc  = "asc"
+	SortDesc = "desc"
+)
+
+func (c *Client) GetChirpList(authorID, sort string) ([]Chirp, error) {
 	var resp *http.Response
 	var err error
 
@@ -47,8 +52,10 @@ func (c *Client) GetChirpList(authorID string) ([]Chirp, error) {
 			return nil, fmt.Errorf("c.get: %w", err)
 		}
 	} else {
+
 		resp, err = c.getWithQuery(EndpointChirps, Queries{
-			AuthorIDParam: authorID,
+			QueryAuthorID: authorID,
+			QuerySort:     sort,
 		})
 		if err != nil {
 			return nil, fmt.Errorf("c.getWithQuery: %w", err)

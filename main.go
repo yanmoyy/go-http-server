@@ -72,8 +72,8 @@ func main() {
 
 	mux.HandleFunc("POST "+api.EndpointChirps, apiCfg.handleCreateChirp)
 	mux.HandleFunc("GET "+api.EndpointChirps, apiCfg.handleGetChirpList)
-	mux.HandleFunc("GET "+api.EndpointChirps+"/{"+api.ChirpIDParam+"}", apiCfg.handleGetChirpByID)
-	mux.HandleFunc("DELETE "+api.EndpointChirps+"/{"+api.ChirpIDParam+"}", apiCfg.handleDeleteChirpByID)
+	mux.HandleFunc("GET "+api.EndpointChirps+"/{"+api.ParamChirpID+"}", apiCfg.handleGetChirpByID)
+	mux.HandleFunc("DELETE "+api.EndpointChirps+"/{"+api.ParamChirpID+"}", apiCfg.handleDeleteChirpByID)
 	mux.HandleFunc("GET "+api.EndpointMetrics, apiCfg.handlerMetrics)
 	mux.HandleFunc("POST "+api.EndpointReset, apiCfg.handlerReset)
 

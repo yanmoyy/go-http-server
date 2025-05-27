@@ -32,7 +32,7 @@ func TestGetAllChirps(t *testing.T) {
 		return
 	}
 
-	list, err := client.GetChirpList("")
+	list, err := client.GetChirpList("", "")
 	if err != nil {
 		t.Fatalf("Failed to get chirp list: %v", err)
 	}

@@ -9,7 +9,7 @@ import (
 )
 
 func (cfg *apiConfig) handleDeleteChirpByID(w http.ResponseWriter, r *http.Request) {
-	chirpIDString := r.PathValue(api.ChirpIDParam)
+	chirpIDString := r.PathValue(api.ParamChirpID)
 	chirpID, err := uuid.Parse(chirpIDString)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid Chirp ID", err)

@@ -3,6 +3,8 @@ package main
 import (
 	"net/http"
 
+	"sort"
+
 	"github.com/google/uuid"
 	"github.com/yanmoyy/go-http-server/internal/api"
 	"github.com/yanmoyy/go-http-server/internal/database"
@@ -10,7 +12,9 @@ import (
 
 func (cfg *apiConfig) handleGetChirpList(w http.ResponseWriter, r *http.Request) {
 	resp := []Chirp{}
-	authorIDString := r.URL.Query().Get(api.AuthorIDParam)
+	query := r.URL.Query()
+	authorIDString := query.Get(api.QueryAuthorID)
+	sortString := query.Get(api.QuerySort)
 
 	var list []database.Chirp
 	var err error
@@ -33,6 +37,11 @@ func (cfg *apiConfig) handleGetChirpList(w http.ResponseWriter, r *http.Request)
 			return
 		}
 	}
+
+	if sortString == api.SortDesc {
+		sort.Slice(list, func(i, j int) bool { return list[i].CreatedAt.After(list[j].CreatedAt) })
+	}
+
 	for _, chirp := range list {
 		resp = append(resp, Chirp{
 			ID:        chirp.ID,
@@ -50,7 +59,7 @@ func (cfg *apiConfig) handleGetChirpByID(w http.ResponseWriter, r *http.Request)
 	type response struct {
 		Chirp
 	}
-	idString := r.PathValue(api.ChirpIDParam)
+	idString := r.PathValue(api.ParamChirpID)
 	id, err := uuid.Parse(idString)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Invalid chirp id", err)
