@@ -22,8 +22,10 @@ func TestUpdateUser(t *testing.T) {
 		return
 	}
 	resp := runLoginUser(t, c, email, password)
+	if t.Failed() {
+		return
+	}
 	jwtToken := resp.Token
-
 	newPassword := "losPollosHermanos"
 	updatedUser := runUpdateUser(t, c, jwtToken, email, newPassword)
 	if t.Failed() {

@@ -73,8 +73,8 @@ func (c *Client) post(endpoint string, body any) (*http.Response, error) {
 	return c.postWithToken(endpoint, "", body)
 }
 
-func (c *Client) put(endpoint string, body any) (*http.Response, error) {
-	return c.putWithToken(endpoint, "", body)
+func (c *Client) deleteWithToken(endpoint, token string) (*http.Response, error) {
+	return c.doRequest(http.MethodDelete, endpoint, token, nil)
 }
 
 func (c *Client) putWithToken(endpoint, token string, body any) (*http.Response, error) {

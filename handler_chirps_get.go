@@ -35,7 +35,7 @@ func (cfg *apiConfig) handleGetChirpByID(w http.ResponseWriter, r *http.Request)
 	idString := r.PathValue(api.ChirpIDParam)
 	id, err := uuid.Parse(idString)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Invalid chirp id", err)
+		respondWithError(w, http.StatusBadRequest, "Invalid chirp id", err)
 		return
 	}
 	chirp, err := cfg.db.GetChirpById(r.Context(), id)

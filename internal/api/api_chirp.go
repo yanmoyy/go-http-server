@@ -71,3 +71,15 @@ func (c *Client) GetChirpByID(id uuid.UUID) (Chirp, error) {
 	}
 	return chirp, nil
 }
+
+func (c *Client) DeleteChirpByID(chirpID uuid.UUID, token string) (statusCode int, err error) {
+	resp, err := c.deleteWithToken(EndpointChirps+"/"+chirpID.String(), token)
+	if err != nil {
+		return resp.StatusCode, fmt.Errorf("c.deleteWithToken: %w", err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+	if resp.StatusCode != http.StatusNoContent {
+		return resp.StatusCode, fmt.Errorf("status code is not StatusNoContent(204): %d", resp.StatusCode)
+	}
+	return resp.StatusCode, nil
+}
