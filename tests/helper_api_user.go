@@ -6,6 +6,11 @@ import (
 	"github.com/yanmoyy/go-http-server/internal/api"
 )
 
+const (
+	defaultEmail    = "saul@bettercall.com"
+	defaultPassword = "123456"
+)
+
 func runReset(t *testing.T, client *api.Client) {
 	t.Run("Reset", func(t *testing.T) {
 		if err := client.Reset(); err != nil {
@@ -31,7 +36,7 @@ func runCreateUser(t *testing.T, client *api.Client, email, password string) api
 }
 
 func runCreateUserDefault(t *testing.T, c *api.Client) api.User {
-	return runCreateUser(t, c, "saul@bettercall.com", "123456")
+	return runCreateUser(t, c, defaultEmail, defaultPassword)
 }
 
 func runLoginUser(t *testing.T, client *api.Client, email, password string) api.LoginResponse {
@@ -50,7 +55,7 @@ func runLoginUser(t *testing.T, client *api.Client, email, password string) api.
 }
 
 func runLoginUserDefault(t *testing.T, c *api.Client) api.LoginResponse {
-	return runLoginUser(t, c, "saul@bettercall.com", "123456")
+	return runLoginUser(t, c, defaultEmail, defaultPassword)
 }
 
 func runUpdateUser(t *testing.T, client *api.Client, token, email, password string) api.User {

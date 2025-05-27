@@ -13,6 +13,8 @@ const (
 	EndpointRefresh = "/api/refresh"
 	EndpointRevoke  = "/api/revoke"
 
+	EndpointPolkaWebhooks = "/api/polka/webhooks"
+
 	// Params
 	ChirpIDParam = "chirpID"
 	BearerPrefix = "Bearer "
