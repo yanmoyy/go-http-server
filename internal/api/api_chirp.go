@@ -37,11 +37,24 @@ func (c *Client) CreateChirp(params CreateChirpParams, token string) (Chirp, err
 	return chirp, nil
 }
 
-func (c *Client) GetChirpList() ([]Chirp, error) {
-	resp, err := c.get(EndpointChirps)
-	if err != nil {
-		return nil, fmt.Errorf("c.get: %w", err)
+func (c *Client) GetChirpList(authorID string) ([]Chirp, error) {
+	var resp *http.Response
+	var err error
+
+	if authorID == "" {
+		resp, err = c.get(EndpointChirps)
+		if err != nil {
+			return nil, fmt.Errorf("c.get: %w", err)
+		}
+	} else {
+		resp, err = c.getWithQuery(EndpointChirps, Queries{
+			AuthorIDParam: authorID,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("c.getWithQuery: %w", err)
+		}
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("status code is not StatusOK(200): %d", resp.StatusCode)

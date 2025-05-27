@@ -5,15 +5,33 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/yanmoyy/go-http-server/internal/api"
+	"github.com/yanmoyy/go-http-server/internal/database"
 )
 
 func (cfg *apiConfig) handleGetChirpList(w http.ResponseWriter, r *http.Request) {
 	resp := []Chirp{}
+	authorIDString := r.URL.Query().Get(api.AuthorIDParam)
 
-	list, err := cfg.db.GetAllChirps(r.Context())
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't get chirp list", err)
-		return
+	var list []database.Chirp
+	var err error
+
+	if authorIDString == "" {
+		list, err = cfg.db.GetAllChirps(r.Context())
+		if err != nil {
+			respondWithError(w, http.StatusInternalServerError, "Couldn't get chirp list", err)
+			return
+		}
+	} else {
+		authorID, err := uuid.Parse(authorIDString)
+		if err != nil {
+			respondWithError(w, http.StatusBadRequest, "malformed author ID", err)
+			return
+		}
+		list, err = cfg.db.GetChirpsByUser(r.Context(), authorID)
+		if err != nil {
+			respondWithError(w, http.StatusInternalServerError, "Couldn't get author's chirp list", err)
+			return
+		}
 	}
 	for _, chirp := range list {
 		resp = append(resp, Chirp{
@@ -35,7 +53,7 @@ func (cfg *apiConfig) handleGetChirpByID(w http.ResponseWriter, r *http.Request)
 	idString := r.PathValue(api.ChirpIDParam)
 	id, err := uuid.Parse(idString)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid chirp id", err)
+		respondWithError(w, http.StatusInternalServerError, "Invalid chirp id", err)
 		return
 	}
 	chirp, err := cfg.db.GetChirpById(r.Context(), id)

@@ -16,7 +16,9 @@ const (
 	EndpointPolkaWebhooks = "/api/polka/webhooks"
 
 	// Params
-	ChirpIDParam = "chirpID"
+	ChirpIDParam  = "chirpID"
+	AuthorIDParam = "author_id"
+
 	BearerPrefix = "Bearer "
 	ApiKeyPrefix = "ApiKey "
 
@@ -24,4 +26,6 @@ const (
 	HeaderContentType     = "Content-Type"
 	HeaderAuthorization   = "Authorization"
 	HeaderApplicationJson = "application/json"
+
+	// Query PAram
 )
