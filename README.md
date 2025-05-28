@@ -14,6 +14,11 @@
 - Build and understand webhooks and API keys
 - Document the `REST API` with markdown
 
+### Chirpy
+
+In this project, I built `"Chirpy"`. Chirpy is a social network similar to
+Twitter. (`tweet` -> `chirp`)
+
 ## Scripts
 
 - For better testability, I added some test scripts files. enjoy!
