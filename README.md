@@ -1,6 +1,6 @@
 # GO-HTTP-SERVER
 
-- Simple HTTP Server in Go for study ([boot.dev](https://boot.dev))
+- Simple HTTP Server in Go (Chirpy) ([boot.dev](https://boot.dev))
 
 ## Goal of This Project
 
